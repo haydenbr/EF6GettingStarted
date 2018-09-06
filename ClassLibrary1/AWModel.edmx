@@ -1,0 +1,500 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AdventureWorksHRModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentID" />
+          </Key>
+          <Property Name="DepartmentID" Type="smallint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="GroupName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6005: The data type 'hierarchyid' is currently not supported for the target Entity Framework version; the column 'OrganizationNode' in the table 'AdventureWorks.HumanResources.Employee' was excluded.-->
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="BusinessEntityID" />
+          </Key>
+          <Property Name="BusinessEntityID" Type="int" Nullable="false" />
+          <Property Name="NationalIDNumber" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="LoginID" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="OrganizationLevel" Type="smallint" StoreGeneratedPattern="Computed" />
+          <Property Name="JobTitle" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="BirthDate" Type="date" Nullable="false" />
+          <Property Name="MaritalStatus" Type="nchar" MaxLength="1" Nullable="false" />
+          <Property Name="Gender" Type="nchar" MaxLength="1" Nullable="false" />
+          <Property Name="HireDate" Type="date" Nullable="false" />
+          <Property Name="SalariedFlag" Type="bit" Nullable="false" />
+          <Property Name="VacationHours" Type="smallint" Nullable="false" />
+          <Property Name="SickLeaveHours" Type="smallint" Nullable="false" />
+          <Property Name="CurrentFlag" Type="bit" Nullable="false" />
+          <Property Name="rowguid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EmployeeDepartmentHistory">
+          <Key>
+            <PropertyRef Name="BusinessEntityID" />
+            <PropertyRef Name="DepartmentID" />
+            <PropertyRef Name="ShiftID" />
+            <PropertyRef Name="StartDate" />
+          </Key>
+          <Property Name="BusinessEntityID" Type="int" Nullable="false" />
+          <Property Name="DepartmentID" Type="smallint" Nullable="false" />
+          <Property Name="ShiftID" Type="tinyint" Nullable="false" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+          <Property Name="EndDate" Type="date" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EmployeePayHistory">
+          <Key>
+            <PropertyRef Name="BusinessEntityID" />
+            <PropertyRef Name="RateChangeDate" />
+          </Key>
+          <Property Name="BusinessEntityID" Type="int" Nullable="false" />
+          <Property Name="RateChangeDate" Type="datetime" Nullable="false" />
+          <Property Name="Rate" Type="money" Nullable="false" />
+          <Property Name="PayFrequency" Type="tinyint" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="JobCandidate">
+          <Key>
+            <PropertyRef Name="JobCandidateID" />
+          </Key>
+          <Property Name="JobCandidateID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BusinessEntityID" Type="int" />
+          <Property Name="Resume" Type="xml" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Shift">
+          <Key>
+            <PropertyRef Name="ShiftID" />
+          </Key>
+          <Property Name="ShiftID" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="StartTime" Type="time" Precision="7" Nullable="false" />
+          <Property Name="EndTime" Type="time" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_EmployeeDepartmentHistory_Department_DepartmentID">
+          <End Role="Department" Type="Self.Department" Multiplicity="1" />
+          <End Role="EmployeeDepartmentHistory" Type="Self.EmployeeDepartmentHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentID" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentHistory">
+              <PropertyRef Name="DepartmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeDepartmentHistory_Employee_BusinessEntityID">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="EmployeeDepartmentHistory" Type="Self.EmployeeDepartmentHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="BusinessEntityID" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentHistory">
+              <PropertyRef Name="BusinessEntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeDepartmentHistory_Shift_ShiftID">
+          <End Role="Shift" Type="Self.Shift" Multiplicity="1" />
+          <End Role="EmployeeDepartmentHistory" Type="Self.EmployeeDepartmentHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shift">
+              <PropertyRef Name="ShiftID" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentHistory">
+              <PropertyRef Name="ShiftID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeePayHistory_Employee_BusinessEntityID">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="EmployeePayHistory" Type="Self.EmployeePayHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="BusinessEntityID" />
+            </Principal>
+            <Dependent Role="EmployeePayHistory">
+              <PropertyRef Name="BusinessEntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_JobCandidate_Employee_BusinessEntityID">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="JobCandidate" Type="Self.JobCandidate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="BusinessEntityID" />
+            </Principal>
+            <Dependent Role="JobCandidate">
+              <PropertyRef Name="BusinessEntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="uspUpdateEmployeeHireInfo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="HumanResources">
+          <Parameter Name="BusinessEntityID" Type="int" Mode="In" />
+          <Parameter Name="JobTitle" Type="nvarchar" Mode="In" />
+          <Parameter Name="HireDate" Type="datetime" Mode="In" />
+          <Parameter Name="RateChangeDate" Type="datetime" Mode="In" />
+          <Parameter Name="Rate" Type="money" Mode="In" />
+          <Parameter Name="PayFrequency" Type="tinyint" Mode="In" />
+          <Parameter Name="CurrentFlag" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="uspUpdateEmployeeLogin" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="HumanResources">
+          <Parameter Name="BusinessEntityID" Type="int" Mode="In" />
+          <Parameter Name="LoginID" Type="nvarchar" Mode="In" />
+          <Parameter Name="JobTitle" Type="nvarchar" Mode="In" />
+          <Parameter Name="HireDate" Type="datetime" Mode="In" />
+          <Parameter Name="CurrentFlag" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="uspUpdateEmployeePersonalInfo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="HumanResources">
+          <Parameter Name="BusinessEntityID" Type="int" Mode="In" />
+          <Parameter Name="NationalIDNumber" Type="nvarchar" Mode="In" />
+          <Parameter Name="BirthDate" Type="datetime" Mode="In" />
+          <Parameter Name="MaritalStatus" Type="nchar" Mode="In" />
+          <Parameter Name="Gender" Type="nchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="AdventureWorksHRModelStoreContainer">
+          <EntitySet Name="Department" EntityType="Self.Department" Schema="HumanResources" store:Type="Tables" />
+          <EntitySet Name="Employee" EntityType="Self.Employee" Schema="HumanResources" store:Type="Tables" />
+          <EntitySet Name="EmployeeDepartmentHistory" EntityType="Self.EmployeeDepartmentHistory" Schema="HumanResources" store:Type="Tables" />
+          <EntitySet Name="EmployeePayHistory" EntityType="Self.EmployeePayHistory" Schema="HumanResources" store:Type="Tables" />
+          <EntitySet Name="JobCandidate" EntityType="Self.JobCandidate" Schema="HumanResources" store:Type="Tables" />
+          <EntitySet Name="Shift" EntityType="Self.Shift" Schema="HumanResources" store:Type="Tables" />
+          <AssociationSet Name="FK_EmployeeDepartmentHistory_Department_DepartmentID" Association="Self.FK_EmployeeDepartmentHistory_Department_DepartmentID">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="EmployeeDepartmentHistory" EntitySet="EmployeeDepartmentHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeDepartmentHistory_Employee_BusinessEntityID" Association="Self.FK_EmployeeDepartmentHistory_Employee_BusinessEntityID">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="EmployeeDepartmentHistory" EntitySet="EmployeeDepartmentHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeDepartmentHistory_Shift_ShiftID" Association="Self.FK_EmployeeDepartmentHistory_Shift_ShiftID">
+            <End Role="Shift" EntitySet="Shift" />
+            <End Role="EmployeeDepartmentHistory" EntitySet="EmployeeDepartmentHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeePayHistory_Employee_BusinessEntityID" Association="Self.FK_EmployeePayHistory_Employee_BusinessEntityID">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="EmployeePayHistory" EntitySet="EmployeePayHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_JobCandidate_Employee_BusinessEntityID" Association="Self.FK_JobCandidate_Employee_BusinessEntityID">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="JobCandidate" EntitySet="JobCandidate" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AdventureWorksHRModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentID" />
+          </Key>
+          <Property Name="DepartmentID" Type="Int16" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="GroupName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="EmployeeDepartmentHistories" Relationship="Self.FK_EmployeeDepartmentHistory_Department_DepartmentID" FromRole="Department" ToRole="EmployeeDepartmentHistory" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="BusinessEntityID" />
+          </Key>
+          <Property Name="BusinessEntityID" Type="Int32" Nullable="false" />
+          <Property Name="NationalIDNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LoginID" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="OrganizationLevel" Type="Int16" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="JobTitle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BirthDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="MaritalStatus" Type="String" MaxLength="1" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="HireDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="SalariedFlag" Type="Boolean" Nullable="false" />
+          <Property Name="VacationHours" Type="Int16" Nullable="false" />
+          <Property Name="SickLeaveHours" Type="Int16" Nullable="false" />
+          <Property Name="CurrentFlag" Type="Boolean" Nullable="false" />
+          <Property Name="rowguid" Type="Guid" Nullable="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="EmployeeDepartmentHistories" Relationship="Self.FK_EmployeeDepartmentHistory_Employee_BusinessEntityID" FromRole="Employee" ToRole="EmployeeDepartmentHistory" />
+          <NavigationProperty Name="EmployeePayHistories" Relationship="Self.FK_EmployeePayHistory_Employee_BusinessEntityID" FromRole="Employee" ToRole="EmployeePayHistory" />
+          <NavigationProperty Name="JobCandidates" Relationship="Self.FK_JobCandidate_Employee_BusinessEntityID" FromRole="Employee" ToRole="JobCandidate" />
+        </EntityType>
+        <EntityType Name="EmployeeDepartmentHistory">
+          <Key>
+            <PropertyRef Name="BusinessEntityID" />
+            <PropertyRef Name="DepartmentID" />
+            <PropertyRef Name="ShiftID" />
+            <PropertyRef Name="StartDate" />
+          </Key>
+          <Property Name="BusinessEntityID" Type="Int32" Nullable="false" />
+          <Property Name="DepartmentID" Type="Int16" Nullable="false" />
+          <Property Name="ShiftID" Type="Byte" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Precision="0" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Department" Relationship="Self.FK_EmployeeDepartmentHistory_Department_DepartmentID" FromRole="EmployeeDepartmentHistory" ToRole="Department" />
+          <NavigationProperty Name="Employee" Relationship="Self.FK_EmployeeDepartmentHistory_Employee_BusinessEntityID" FromRole="EmployeeDepartmentHistory" ToRole="Employee" />
+          <NavigationProperty Name="Shift" Relationship="Self.FK_EmployeeDepartmentHistory_Shift_ShiftID" FromRole="EmployeeDepartmentHistory" ToRole="Shift" />
+        </EntityType>
+        <EntityType Name="EmployeePayHistory">
+          <Key>
+            <PropertyRef Name="BusinessEntityID" />
+            <PropertyRef Name="RateChangeDate" />
+          </Key>
+          <Property Name="BusinessEntityID" Type="Int32" Nullable="false" />
+          <Property Name="RateChangeDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Rate" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="PayFrequency" Type="Byte" Nullable="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Employee" Relationship="Self.FK_EmployeePayHistory_Employee_BusinessEntityID" FromRole="EmployeePayHistory" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="JobCandidate">
+          <Key>
+            <PropertyRef Name="JobCandidateID" />
+          </Key>
+          <Property Name="JobCandidateID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BusinessEntityID" Type="Int32" />
+          <Property Name="Resume" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Employee" Relationship="Self.FK_JobCandidate_Employee_BusinessEntityID" FromRole="JobCandidate" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Shift">
+          <Key>
+            <PropertyRef Name="ShiftID" />
+          </Key>
+          <Property Name="ShiftID" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="StartTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="EndTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="EmployeeDepartmentHistories" Relationship="Self.FK_EmployeeDepartmentHistory_Shift_ShiftID" FromRole="Shift" ToRole="EmployeeDepartmentHistory" />
+        </EntityType>
+        <Association Name="FK_EmployeeDepartmentHistory_Department_DepartmentID">
+          <End Role="Department" Type="Self.Department" Multiplicity="1" />
+          <End Role="EmployeeDepartmentHistory" Type="Self.EmployeeDepartmentHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentID" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentHistory">
+              <PropertyRef Name="DepartmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeDepartmentHistory_Employee_BusinessEntityID">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="EmployeeDepartmentHistory" Type="Self.EmployeeDepartmentHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="BusinessEntityID" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentHistory">
+              <PropertyRef Name="BusinessEntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeePayHistory_Employee_BusinessEntityID">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="EmployeePayHistory" Type="Self.EmployeePayHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="BusinessEntityID" />
+            </Principal>
+            <Dependent Role="EmployeePayHistory">
+              <PropertyRef Name="BusinessEntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_JobCandidate_Employee_BusinessEntityID">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="JobCandidate" Type="Self.JobCandidate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="BusinessEntityID" />
+            </Principal>
+            <Dependent Role="JobCandidate">
+              <PropertyRef Name="BusinessEntityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeDepartmentHistory_Shift_ShiftID">
+          <End Role="Shift" Type="Self.Shift" Multiplicity="1" />
+          <End Role="EmployeeDepartmentHistory" Type="Self.EmployeeDepartmentHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shift">
+              <PropertyRef Name="ShiftID" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentHistory">
+              <PropertyRef Name="ShiftID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AdventureWorksEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Departments" EntityType="Self.Department" />
+          <EntitySet Name="Employees" EntityType="Self.Employee" />
+          <EntitySet Name="EmployeeDepartmentHistories" EntityType="Self.EmployeeDepartmentHistory" />
+          <EntitySet Name="EmployeePayHistories" EntityType="Self.EmployeePayHistory" />
+          <EntitySet Name="JobCandidates" EntityType="Self.JobCandidate" />
+          <EntitySet Name="Shifts" EntityType="Self.Shift" />
+          <AssociationSet Name="FK_EmployeeDepartmentHistory_Department_DepartmentID" Association="Self.FK_EmployeeDepartmentHistory_Department_DepartmentID">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="EmployeeDepartmentHistory" EntitySet="EmployeeDepartmentHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeDepartmentHistory_Employee_BusinessEntityID" Association="Self.FK_EmployeeDepartmentHistory_Employee_BusinessEntityID">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="EmployeeDepartmentHistory" EntitySet="EmployeeDepartmentHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeePayHistory_Employee_BusinessEntityID" Association="Self.FK_EmployeePayHistory_Employee_BusinessEntityID">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="EmployeePayHistory" EntitySet="EmployeePayHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_JobCandidate_Employee_BusinessEntityID" Association="Self.FK_JobCandidate_Employee_BusinessEntityID">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="JobCandidate" EntitySet="JobCandidates" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeDepartmentHistory_Shift_ShiftID" Association="Self.FK_EmployeeDepartmentHistory_Shift_ShiftID">
+            <End Role="Shift" EntitySet="Shifts" />
+            <End Role="EmployeeDepartmentHistory" EntitySet="EmployeeDepartmentHistories" />
+          </AssociationSet>
+          <FunctionImport Name="uspUpdateEmployeeHireInfo">
+            <Parameter Name="BusinessEntityID" Mode="In" Type="Int32" />
+            <Parameter Name="JobTitle" Mode="In" Type="String" />
+            <Parameter Name="HireDate" Mode="In" Type="DateTime" />
+            <Parameter Name="RateChangeDate" Mode="In" Type="DateTime" />
+            <Parameter Name="Rate" Mode="In" Type="Decimal" />
+            <Parameter Name="PayFrequency" Mode="In" Type="Byte" />
+            <Parameter Name="CurrentFlag" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="uspUpdateEmployeeLogin">
+            <Parameter Name="BusinessEntityID" Mode="In" Type="Int32" />
+            <Parameter Name="LoginID" Mode="In" Type="String" />
+            <Parameter Name="JobTitle" Mode="In" Type="String" />
+            <Parameter Name="HireDate" Mode="In" Type="DateTime" />
+            <Parameter Name="CurrentFlag" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="uspUpdateEmployeePersonalInfo">
+            <Parameter Name="BusinessEntityID" Mode="In" Type="Int32" />
+            <Parameter Name="NationalIDNumber" Mode="In" Type="String" />
+            <Parameter Name="BirthDate" Mode="In" Type="DateTime" />
+            <Parameter Name="MaritalStatus" Mode="In" Type="String" />
+            <Parameter Name="Gender" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AdventureWorksHRModelStoreContainer" CdmEntityContainer="AdventureWorksEntities">
+          <EntitySetMapping Name="Departments">
+            <EntityTypeMapping TypeName="AdventureWorksHRModel.Department">
+              <MappingFragment StoreEntitySet="Department">
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="GroupName" ColumnName="GroupName" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="AdventureWorksHRModel.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="BusinessEntityID" ColumnName="BusinessEntityID" />
+                <ScalarProperty Name="NationalIDNumber" ColumnName="NationalIDNumber" />
+                <ScalarProperty Name="LoginID" ColumnName="LoginID" />
+                <ScalarProperty Name="OrganizationLevel" ColumnName="OrganizationLevel" />
+                <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+                <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
+                <ScalarProperty Name="MaritalStatus" ColumnName="MaritalStatus" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="HireDate" ColumnName="HireDate" />
+                <ScalarProperty Name="SalariedFlag" ColumnName="SalariedFlag" />
+                <ScalarProperty Name="VacationHours" ColumnName="VacationHours" />
+                <ScalarProperty Name="SickLeaveHours" ColumnName="SickLeaveHours" />
+                <ScalarProperty Name="CurrentFlag" ColumnName="CurrentFlag" />
+                <ScalarProperty Name="rowguid" ColumnName="rowguid" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeDepartmentHistories">
+            <EntityTypeMapping TypeName="AdventureWorksHRModel.EmployeeDepartmentHistory">
+              <MappingFragment StoreEntitySet="EmployeeDepartmentHistory">
+                <ScalarProperty Name="BusinessEntityID" ColumnName="BusinessEntityID" />
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="ShiftID" ColumnName="ShiftID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeePayHistories">
+            <EntityTypeMapping TypeName="AdventureWorksHRModel.EmployeePayHistory">
+              <MappingFragment StoreEntitySet="EmployeePayHistory">
+                <ScalarProperty Name="BusinessEntityID" ColumnName="BusinessEntityID" />
+                <ScalarProperty Name="RateChangeDate" ColumnName="RateChangeDate" />
+                <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="PayFrequency" ColumnName="PayFrequency" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JobCandidates">
+            <EntityTypeMapping TypeName="AdventureWorksHRModel.JobCandidate">
+              <MappingFragment StoreEntitySet="JobCandidate">
+                <ScalarProperty Name="JobCandidateID" ColumnName="JobCandidateID" />
+                <ScalarProperty Name="BusinessEntityID" ColumnName="BusinessEntityID" />
+                <ScalarProperty Name="Resume" ColumnName="Resume" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Shifts">
+            <EntityTypeMapping TypeName="AdventureWorksHRModel.Shift">
+              <MappingFragment StoreEntitySet="Shift">
+                <ScalarProperty Name="ShiftID" ColumnName="ShiftID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="uspUpdateEmployeeHireInfo" FunctionName="AdventureWorksHRModel.Store.uspUpdateEmployeeHireInfo" />
+          <FunctionImportMapping FunctionImportName="uspUpdateEmployeeLogin" FunctionName="AdventureWorksHRModel.Store.uspUpdateEmployeeLogin" />
+          <FunctionImportMapping FunctionImportName="uspUpdateEmployeePersonalInfo" FunctionName="AdventureWorksHRModel.Store.uspUpdateEmployeePersonalInfo" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
