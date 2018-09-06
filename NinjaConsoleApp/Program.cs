@@ -270,7 +270,7 @@ namespace NinjaConsoleApp
 
                 foreach (var ninja in ninjas)
                 {
-                    Console.WriteLine("{0}", ninja.);
+                    Console.WriteLine("{0}", ninja.Name);
                 }
 
                 var moreNinjas = context.Ninjas
